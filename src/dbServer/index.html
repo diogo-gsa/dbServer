@@ -1,0 +1,111 @@
+<!doctype html>
+
+<html>
+<head>
+		<meta name="Diogo Anjos (nr.62490)"/> 
+		<style type="text/css">
+			body {background-color:#3C3204;}
+			h2 { font-family:helvetica; font-size: 24px bold; color:#E3FB71; }
+			p { font-family:helvetica; font-size: 15px bold ; color:#E3FB71; }
+		</style>
+
+		<script type="text/javascript">
+			window.onload = function(){
+				var xmlHttp = new XMLHttpRequest();	
+			    xmlHttp.open( "GET", "/initTS", false );
+			    xmlHttp.send( null );
+			    var initTS = xmlHttp.responseText; 
+			    
+			    var date = new Date(initTS*1);
+			    
+				var year = date.getFullYear();
+				var month = ((date.getMonth() + 1) < 10) ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+				var day = date.getDate();
+			    var hours = date.getHours();
+				var minutes = date.getMinutes();
+				var seconds = date.getSeconds();	
+				var formattedTime = hours + ':' + minutes + ':' + seconds+'  '+day+'/'+month+'/'+year;
+			    			    
+				document.getElementById("startTime").innerHTML = "Running since: "+formattedTime;
+			
+				var nothing = setInterval(function(){
+					var now = new Date();
+					var elapsed = now - initTS;
+					var elDate = new Date(elapsed);
+					var elDays = elDate.getDate();
+					var elMonth = ((elDate.getMonth() + 1) < 10) ? '0' + (elDate.getMonth() + 1) : (elDate.getMonth() + 1);			
+					var elSec = elDate.getSeconds();					
+					var elHrs = elDate.getHours();
+					var elMin = elDate.getMinutes();
+					document.getElementById("elapsedTime").innerHTML = "UpTime: "+(elMonth-1)+" months "+(elDays-1)+" days "+elHrs+" hrs. "+elMin+" min. "+elSec+" sec. ";
+				},1000);
+			}
+		</script>
+	
+	
+</head>
+<body>
+	<h2>Daemon Process "DBServer" @ sb-dev.tagus.ist.utl.pt:62491</h2>
+	<p id="startTime"></p>
+	<p id="elapsedTime"></p>
+	<hr>
+	<table style="color: #E3FB71">	
+		<tr>
+			<td>library</td>
+			<td><a href="https://172.20.70.232/reading" style="color: #E3FB71; margin-left:4em"><code>https://172.20.70.232/reading</code></a></td>	
+			<td><a href="/library?format=json" style="color: #E3FB71; margin-left:4em"><code>JSON</code></a></td>
+			<td><a href="/library?format=plain" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>	
+		</tr>
+		<tr>
+			<td>kernel_14</td>
+			<td><a href="https://172.20.70.229/reading" style="color: #E3FB71; margin-left:4em"><code>https://172.20.70.229/reading</code></a></td>	
+			<td><a href="/kernel_14?format=json" style="color: #E3FB71; margin-left:4em"><code>JSON</code></a></td>
+			<td><a href="/kernel_14?format=plain" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>	
+		</tr>		
+		<tr>
+			<td>kernel_16</td>
+			<td><a href="https://172.20.70.238/reading" style="color: #E3FB71; margin-left:4em"><code>https://172.20.70.238/reading</code></a></td>	
+			<td><a href="/kernel_16?format=json" style="color: #E3FB71; margin-left:4em"><code>JSON</code></a></td>
+			<td><a href="/kernel_16?format=plain" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>	
+		</tr>		
+		<tr>
+			<td>room_1.17</td>
+			<td><a href="https://172.20.70.234/reading" style="color: #E3FB71; margin-left:4em"><code>https://172.20.70.234/reading</code></a></td>
+			<td><a href="/room_1.17?format=json" style="color: #E3FB71; margin-left:4em"><code>JSON</code></a></td>
+			<td><a href="/room_1.17?format=plain" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>		
+		</tr>		
+		<tr>
+			<td>room_1.19</td>
+			<td><a href="https://172.20.70.235/reading" style="color: #E3FB71; margin-left:4em"><code>https://172.20.70.235/reading</code></a></td>
+			<td><a href="/room_1.19?format=json" style="color: #E3FB71; margin-left:4em"><code>JSON</code></a></td>
+			<td><a href="/room_1.19?format=plain" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>		
+		</tr>	
+		<tr>
+			<td>UTA_A4</td>
+			<td><a href="https://172.20.70.237/reading" style="color: #E3FB71; margin-left:4em"><code>https://172.20.70.237/reading</code></a></td>
+			<td><a href="/UTA_A4?format=json" style="color: #E3FB71; margin-left:4em"><code>JSON</code></a></td>
+			<td><a href="/UTA_A4?format=plain" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>		
+		</tr>	
+		<tr>
+			<td>amphitheater_A4</td>
+			<td><a href="https://172.20.70.231/reading" style="color: #E3FB71; margin-left:4em"><code>https://172.20.70.231/reading</code></a></td>
+			<td><a href="/amphitheater_A4?format=json" style="color: #E3FB71; margin-left:4em"><code>JSON</code></a></td>
+			<td><a href="/amphitheater_A4?format=plain" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>		
+		</tr>	
+		<tr>
+			<td>amphitheater_A5</td>
+			<td><a href="https://172.20.70.233/reading" style="color: #E3FB71; margin-left:4em"><code>https://172.20.70.233/reading</code></a></td>
+			<td><a href="/amphitheater_A5?format=json" style="color: #E3FB71; margin-left:4em"><code>JSON</code></a></td>
+			<td><a href="/amphitheater_A5?format=plain" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>		
+		</tr>	
+		<tr>
+			<td>laboratory_1.58</td>
+			<td><a href="https://172.20.70.236/reading" style="color: #E3FB71; margin-left:4em"><code>https://172.20.70.236/reading</code></a></td>
+			<td><a href="/laboratory_1.58?format=json" style="color: #E3FB71; margin-left:4em"><code>JSON</code></a></td>
+			<td><a href="/laboratory_1.58?format=plain" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>		
+		</tr>		
+	</table>
+	
+	
+</body>
+</html>
