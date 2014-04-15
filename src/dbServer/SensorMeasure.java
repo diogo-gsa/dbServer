@@ -115,6 +115,7 @@ public class SensorMeasure {
         
         Double current;    
         Double voltage;
+        Double powerfactor= new Double(0);
         
         try{
             current = (double) specificPhase.get("current");
@@ -130,9 +131,18 @@ public class SensorMeasure {
             voltage = (double) specificPhase.get("voltage");
         }
         
+        
+        if(specificPhase.get("powerfactor").getClass().equals(Long.class)){
+            powerfactor = (double) new Double((long) specificPhase.get("powerfactor"));
+        }
+        
+        if(specificPhase.get("powerfactor").getClass().equals(Double.class)){
+            powerfactor = (double) specificPhase.get("powerfactor");
+        }
+        
         Phase result = new Phase((long) specificPhase.get("voltage"),
                 current, 
-                (double) specificPhase.get("powerfactor"));
+                powerfactor);
         return result;
     }
 

@@ -1,24 +1,13 @@
 package dbServer;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
-import java.util.Random;
-
-import javax.imageio.ImageIO;
-import javax.xml.ws.Dispatch;
-
-import sun.org.mozilla.javascript.internal.ast.CatchClause;
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -58,13 +47,20 @@ public class DBServer {
             System.out.println("Server is running at: "+server.getAddress());
             
             while(true){
-                storeLastSensorsData();
-                Thread.sleep(10000);                
+                try {
+                    storeLastSensorsData();
+                    Thread.sleep(10000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }                                
             }
-               
         }catch(Exception e){
             e.printStackTrace();
         }        
+    }
+    
+    private static void startReading(){
+        
     }
     
     private static void storeLastSensorsData(){
@@ -124,7 +120,7 @@ public class DBServer {
     static class GET_IndexPage implements HttpHandler{        
         public void handle(HttpExchange t) throws IOException {
             //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("src/dbServer/index.html");
+            String response = readFile("index.html");
             System.out.println("Loaded: "+"index.html");            
             dispacthRequest(t, response);            
         }
