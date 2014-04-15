@@ -39,6 +39,9 @@
 					var elMin = elDate.getMinutes();
 					document.getElementById("elapsedTime").innerHTML = "UpTime: "+(elMonth-1)+" months "+(elDays-1)+" days "+elHrs+" hrs. "+elMin+" min. "+elSec+" sec. ";
 				},1000);
+			
+				document.getElementById("end").innerHTML = "Diogo Anjos | diogo.silva.anjos@tecnico.ulisboa.pt | Page/Server Last Update: "+initTS+" (Unix TS)"
+				
 			}
 		</script>
 	
@@ -105,7 +108,10 @@
 			<td><a href="/laboratory_1.58?format=Plain_FileDB" style="color: #E3FB71; margin-left:4em"><code>Plain</code></a></td>		
 		</tr>		
 	</table>
-	
+	<div id="end" style="position: absolute; bottom: 5px; text-align:center">
+    
+    Diogo Anjos | diogo.silva.anjos@tecnico.ulisboa.pt | Page/Server last update:  
+    </div>
 	
 </body>
 </html>
