@@ -26,15 +26,15 @@ public class IOMetadata {
         sensorAddresses.put(SensorID.AMPHITHEATER_A5,   "https://172.20.70.233/reading");
         sensorAddresses.put(SensorID.LABORATORY_1_58,   "https://172.20.70.236/reading");
         
-        sensorDBFileNames.put(SensorID.LIBRARY,         "library-JSON_FileDB");
-        sensorDBFileNames.put(SensorID.DEPARTMENT_14,   "kernel_14-JSON_FileDB");
-        sensorDBFileNames.put(SensorID.DEPARTMENT_16,   "kernel_16-JSON_FileDB");
-        sensorDBFileNames.put(SensorID.ROOM_1_17,       "room_1.17-JSON_FileDB");
-        sensorDBFileNames.put(SensorID.ROOM_1_19,       "room_1.19-JSON_FileDB");
-        sensorDBFileNames.put(SensorID.UTA_A4,          "UTA_A4-JSON_FileDB");
-        sensorDBFileNames.put(SensorID.AMPHITHEATER_A4, "amphitheater_A4-JSON_FileDB");
-        sensorDBFileNames.put(SensorID.AMPHITHEATER_A5, "amphitheater_A5-JSON_FileDB");
-        sensorDBFileNames.put(SensorID.LABORATORY_1_58, "laboratory_1.58-JSON_FileDB");
+        sensorDBFileNames.put(SensorID.LIBRARY,         "library-JSON_FileDB.txt");
+        sensorDBFileNames.put(SensorID.DEPARTMENT_14,   "kernel_14-JSON_FileDB.txt");
+        sensorDBFileNames.put(SensorID.DEPARTMENT_16,   "kernel_16-JSON_FileDB.txt");
+        sensorDBFileNames.put(SensorID.ROOM_1_17,       "room_1.17-JSON_FileDB.txt");
+        sensorDBFileNames.put(SensorID.ROOM_1_19,       "room_1.19-JSON_FileDB.txt");
+        sensorDBFileNames.put(SensorID.UTA_A4,          "UTA_A4-JSON_FileDB.txt");
+        sensorDBFileNames.put(SensorID.AMPHITHEATER_A4, "amphitheater_A4-JSON_FileDB.txt");
+        sensorDBFileNames.put(SensorID.AMPHITHEATER_A5, "amphitheater_A5-JSON_FileDB.txt");
+        sensorDBFileNames.put(SensorID.LABORATORY_1_58, "laboratory_1.58-JSON_FileDB.txt");
     }
 
     public static String getSensorUsername(){
