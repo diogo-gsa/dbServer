@@ -22,6 +22,7 @@ public class DBServer {
         HttpServer server = null;
         initTS = System.currentTimeMillis();
         try {
+            System.out.println("Starting Server...");
             server = HttpServer.create(new InetSocketAddress(__PORT__), 0);
 
             // Chart WebPage Init Handlers
@@ -30,6 +31,7 @@ public class DBServer {
 
             //GET FilesDB
             //usage: 
+            /*TODO APAGAR
             server.createContext("/library",         new GET_libraryFilesDB());
             server.createContext("/kernel_14",       new GET_kernel_14FilesDB());
             server.createContext("/kernel_16",       new GET_kernel_16FilesDB());
@@ -39,8 +41,26 @@ public class DBServer {
             server.createContext("/amphitheater_A4", new GET_amphitheater_A4FilesDB());
             server.createContext("/amphitheater_A5", new GET_amphitheater_A5FilesDB());
             server.createContext("/laboratory_1.58", new GET_laboratory_158FilesDB());
+            */
            
+            System.out.println("Initialized resources:");
+            for(SensorID id : SensorID.values()){
+                String resource = id.toString().toLowerCase();
+                
+                server.createContext("/getAllHistoricReading/"+resource, new GET_AllHistoricReading(id));                
+                System.out.println("/getAllHistoricReading/"+resource);
+                
+                server.createContext("/getCurrentReading/"+resource, new GET_CurrentReading(id));
+                System.out.println("/getCurrentReading/"+resource);
+                
+                server.createContext("/getHistoricReading/"+resource, new GET_HistoricReading(id));
+                System.out.println("/getHistoricReading/"+resource+"/int:pastReadings");
+                            
+            }
             
+            
+            
+            /* TODO APAGAR
             server.createContext("/getAllHistoricReading/library", new GET_AllHistoricReading(SensorID.LIBRARY));
             server.createContext("/getAllHistoricReading/department_14", new GET_AllHistoricReading(SensorID.DEPARTMENT_14));
             server.createContext("/getAllHistoricReading/department_16", new GET_AllHistoricReading(SensorID.DEPARTMENT_16));
@@ -50,10 +70,11 @@ public class DBServer {
             server.createContext("/getAllHistoricReading/amphitheater_A4", new GET_AllHistoricReading(SensorID.AMPHITHEATER_A4));
             server.createContext("/getAllHistoricReading/amphitheater_A5", new GET_AllHistoricReading(SensorID.AMPHITHEATER_A5));
             server.createContext("/getAllHistoricReading/laboratory_1_58", new GET_AllHistoricReading(SensorID.LABORATORY_1_58));
-            
+            */
             
             //== REST Core Resources ====================================
             //usage: /getCurrentReading/library
+            /* TODO APAGAR
             server.createContext("/getCurrentReading/library",          new GET_CurrentReading(SensorID.LIBRARY));
             server.createContext("/getCurrentReading/department_14",    new GET_CurrentReading(SensorID.DEPARTMENT_14));
             server.createContext("/getCurrentReading/department_16",    new GET_CurrentReading(SensorID.DEPARTMENT_16));
@@ -62,9 +83,10 @@ public class DBServer {
             server.createContext("/getCurrentReading/UTA_A4",           new GET_CurrentReading(SensorID.UTA_A4));
             server.createContext("/getCurrentReading/amphitheater_A4",  new GET_CurrentReading(SensorID.AMPHITHEATER_A4));
             server.createContext("/getCurrentReading/amphitheater_A5",  new GET_CurrentReading(SensorID.AMPHITHEATER_A5));
-            server.createContext("/getCurrentReading/laboratory_1_58",  new GET_CurrentReading(SensorID.LABORATORY_1_58));
+            server.createContext("/getCurrentReading/laboratory_1_58",  new GET_CurrentReading(SensorID.LABORATORY_1_58)); */
             
             //usage: /getHistoricReading/last/17            
+            /* TODO APAGAR
             server.createContext("/getHistoricReading/library",         new GET_HistoricReading(SensorID.LIBRARY));
             server.createContext("/getHistoricReading/department_14",   new GET_HistoricReading(SensorID.DEPARTMENT_14));
             server.createContext("/getHistoricReading/department_16",   new GET_HistoricReading(SensorID.DEPARTMENT_16));
@@ -73,7 +95,7 @@ public class DBServer {
             server.createContext("/getHistoricReading/UTA_A4",          new GET_HistoricReading(SensorID.UTA_A4));
             server.createContext("/getHistoricReading/amphitheater_A4", new GET_HistoricReading(SensorID.AMPHITHEATER_A4));
             server.createContext("/getHistoricReading/amphitheater_A5", new GET_HistoricReading(SensorID.AMPHITHEATER_A5));
-            server.createContext("/getHistoricReading/laboratory_1_58", new GET_HistoricReading(SensorID.LABORATORY_1_58));
+            server.createContext("/getHistoricReading/laboratory_1_58", new GET_HistoricReading(SensorID.LABORATORY_1_58)); */
             //============================================================
 
             server.setExecutor(null); // creates a default executor
@@ -99,7 +121,6 @@ public class DBServer {
         SensorDriver sensor;
 
         for(SensorID id : SensorID.values()){
-            System.out.println("[T]:"+id);
             sensor = new SensorDriver(IOMetadata.getSensorAddr(id), IOMetadata.getSensorUsername(), IOMetadata.getSensorPassword());
             fetchAndSaveDataFromSensor(sensor, IOMetadata.getSensorFileName(id));            
         }
@@ -249,18 +270,18 @@ public class DBServer {
     
     
     
-    static class GET_lastLibraryFilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getPath(); // get the "idSensor=library" URL's part            
-            int numberOfLastReadings = Integer.parseInt(parametersListURI.split("/")[3]); //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFileFisrtLines("library-JSON_FileDB.txt", numberOfLastReadings);
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
+//    static class GET_lastLibraryFilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getPath(); // get the "idSensor=library" URL's part            
+//            int numberOfLastReadings = Integer.parseInt(parametersListURI.split("/")[3]); //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFileFisrtLines("library-JSON_FileDB.txt", numberOfLastReadings);
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
     
     //server.createContext("/getHistoricReading/library", new GET_HistoricReading());    
     static class GET_HistoricReading implements HttpHandler {
@@ -295,123 +316,123 @@ public class DBServer {
     }
     
     
-    static class GET_libraryFilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
-            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("library-" + format + ".txt");
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
-
-
-    static class GET_kernel_14FilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
-            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("kernel_14-" + format + ".txt");
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
-
-    static class GET_kernel_16FilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
-            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("kernel_16-" + format + ".txt");
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
-
-    static class GET_room_117FilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
-            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("room_1.17-" + format + ".txt");
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
-
-    static class GET_room_119FilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
-            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("room_1.19-" + format + ".txt");
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
-
-    static class GET_UTA_A4FilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
-            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("UTA_A4-" + format + ".txt");
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
-
-    static class GET_amphitheater_A4FilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
-            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("amphitheater_A4-" + format + ".txt");
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
-
-    static class GET_amphitheater_A5FilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
-            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("amphitheater_A5-" + format + ".txt");
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
-
-    static class GET_laboratory_158FilesDB
-            implements HttpHandler {
-        public void handle(HttpExchange t) throws IOException {
-            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
-            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
-            //library-JSON_FileDB.txt
-            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
-            String response = readFile("laboratory_1.58-" + format + ".txt");
-            //System.out.println("Loaded: "+"index.html");            
-            dispacthRequest(t, response);
-        }
-    }
+//    static class GET_libraryFilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
+//            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFile("library-" + format + ".txt");
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
+//
+//
+//    static class GET_kernel_14FilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
+//            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFile("kernel_14-" + format + ".txt");
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
+//
+//    static class GET_kernel_16FilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
+//            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFile("kernel_16-" + format + ".txt");
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
+//
+//    static class GET_room_117FilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
+//            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFile("room_1.17-" + format + ".txt");
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
+//
+//    static class GET_room_119FilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
+//            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFile("room_1.19-" + format + ".txt");
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
+//
+//    static class GET_UTA_A4FilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
+//            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFile("UTA_A4-" + format + ".txt");
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
+//
+//    static class GET_amphitheater_A4FilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
+//            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFile("amphitheater_A4-" + format + ".txt");
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
+//
+//    static class GET_amphitheater_A5FilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
+//            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFile("amphitheater_A5-" + format + ".txt");
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
+//
+//    static class GET_laboratory_158FilesDB
+//            implements HttpHandler {
+//        public void handle(HttpExchange t) throws IOException {
+//            String parametersListURI = t.getRequestURI().getQuery(); // get the "idSensor=library" URL's part            
+//            String format = parametersListURI.split("=")[1]; //extract resource name (eg. amcharts.js)
+//            //library-JSON_FileDB.txt
+//            //ANTES DE PASSAR PARA JAR: "src/dbServer/index.html" --> "index.html"
+//            String response = readFile("laboratory_1.58-" + format + ".txt");
+//            //System.out.println("Loaded: "+"index.html");            
+//            dispacthRequest(t, response);
+//        }
+//    }
 
 
     private static void dispacthRequest(HttpExchange t, String response) throws IOException {
