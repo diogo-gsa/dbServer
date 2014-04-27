@@ -32,7 +32,7 @@ public class DBServer {
             server.createContext("/", new GET_IndexPage());
             server.createContext("/initTS", new GET_initTS());
 
-            //GET FilesDB Handlers
+            //GET FilesDB
             //usage: 
             server.createContext("/library", new GET_libraryFilesDB());
             server.createContext("/kernel_14", new GET_kernel_14FilesDB());
@@ -44,19 +44,32 @@ public class DBServer {
             server.createContext("/amphitheater_A5", new GET_amphitheater_A5FilesDB());
             server.createContext("/laboratory_1.58", new GET_laboratory_158FilesDB());
 
-            //get last lines
-            server.createContext("/library/last", new GET_lastLibraryFilesDB());
-             /* TODO
-             server.createContext("/kernel_14/last", new GET_lastKernel_14FilesDB());
-             server.createContext("/kernel_16/last", new GET_lastkernel_16FilesDB());
-             server.createContext("/room_1.17/last", new GET_lastRoom_117FilesDB());
-             server.createContext("/room_1.19/last", new GET_lastRoom_119FilesDB());
-             server.createContext("/UTA_A4/last", new GET_lastUTA_A4FilesDB());
-             server.createContext("/amphitheater_A4/last", new GET_lastAmphitheater_A4FilesDB());
-             server.createContext("/amphitheater_A5/last", new GET_lastLibraryFilesDB()); 
-             server.createContext("/laboratory_1.58/last", new GET_lastLibraryFilesDB());
+            //== REST Core Resources ====================================
+            //GET currentReading 
+            //usage: /getCurrentReading/library
+            server.createContext("/getCurrentReading", new GET_CurrentReading());
+
+            //get last N Readings
+            //usage: /getHistoricReading/last/17
+            server.createContext("/library/last", new GET_lastLibraryFilesDB());            
+            // /getHistoricReading/library/20
+            server.createContext("/getHistoricReading", new GET_HistoricReading());
+            //============================================================
+                        
+            
+            /*
+             * TODO server.createContext("/kernel_14/last", new
+             * GET_lastKernel_14FilesDB()); server.createContext("/kernel_16/last", new
+             * GET_lastkernel_16FilesDB()); server.createContext("/room_1.17/last", new
+             * GET_lastRoom_117FilesDB()); server.createContext("/room_1.19/last", new
+             * GET_lastRoom_119FilesDB()); server.createContext("/UTA_A4/last", new
+             * GET_lastUTA_A4FilesDB()); server.createContext("/amphitheater_A4/last", new
+             * GET_lastAmphitheater_A4FilesDB());
+             * server.createContext("/amphitheater_A5/last", new
+             * GET_lastLibraryFilesDB()); server.createContext("/laboratory_1.58/last",
+             * new GET_lastLibraryFilesDB());
              */
-             
+
             server.setExecutor(null); // creates a default executor
             server.start();
 
@@ -73,10 +86,6 @@ public class DBServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private static void startReading() {
-
     }
 
     private static void storeLastSensorsData() {
@@ -183,6 +192,31 @@ public class DBServer {
             dispacthRequest(t, "" + initTS);
         }
     }
+    
+    static class GET_CurrentReading implements HttpHandler {
+        // /getCurrentReading/library
+        public void handle(HttpExchange t) throws IOException {
+            String parametersListURI = t.getRequestURI().getPath();            
+            String sensorID = parametersListURI.split("/")[2]; // e.g. extract "library"
+            
+            SensorDriver sensor = null;            
+            switch(sensorID){
+                case "library"          : sensor = new SensorDriver("https://172.20.70.232/reading", "root", "root"); break;
+                case "kernel_14"        : sensor = new SensorDriver("https://172.20.70.229/reading", "root", "root"); break;
+                case "kernel_16"        : sensor = new SensorDriver("https://172.20.70.238/reading", "root", "root"); break;
+                case "room_1.17"        : sensor = new SensorDriver("https://172.20.70.234/reading", "root", "root"); break;
+                case "room_1.19"        : sensor = new SensorDriver("https://172.20.70.235/reading", "root", "root"); break;                
+                case "UTA_A4"           : sensor = new SensorDriver("https://172.20.70.237/reading", "root", "root"); break;                
+                case "amphitheater_A4"  : sensor = new SensorDriver("https://172.20.70.231/reading", "root", "root"); break;
+                case "amphitheater_A5"  : sensor = new SensorDriver("https://172.20.70.233/reading", "root", "root"); break;
+                case "laboratory_1.58"  : sensor = new SensorDriver("https://172.20.70.236/reading", "root", "root"); break;
+                default                 : System.out.println("*** Error ***: This sensor does NOT exist");
+            }                        
+            SensorMeasure measure =  sensor.getNewMeasure();
+            String response = buildJSONmeasureFile(measure);
+            dispacthRequest(t, response);
+        }
+    }
 
     static class GET_lastLibraryFilesDB
             implements HttpHandler {
@@ -194,6 +228,23 @@ public class DBServer {
             String response = readFileFisrtLines("library-JSON_FileDB.txt", numberOfLastReadings);
             //System.out.println("Loaded: "+"index.html");            
             dispacthRequest(t, response);
+        }
+    }
+    
+    static class GET_HistoricReading
+            implements HttpHandler {
+        
+        public void handle(HttpExchange t) throws IOException {
+            String parametersListURI = t.getRequestURI().getPath(); // get the "idSensor=library" URL's part            
+            // /getHistoricReading/library/20
+            String sendorID = parametersListURI.split("/")[2];
+            int numberOfLastReadings = Integer.parseInt(parametersListURI.split("/")[3]); //extract resource name (eg. amcharts.js)
+
+            //String response = readFileFisrtLines("library-JSON_FileDB.txt", numberOfLastReadings);
+            String response = readFileFisrtLines(sendorID+"-JSON_FileDB.txt", numberOfLastReadings);
+            //System.out.println("Loaded: "+"index.html");            
+            dispacthRequest(t, response);
+        
         }
     }
 
@@ -324,29 +375,22 @@ public class DBServer {
 
     }
 
-    
+
     /*
-    private static String calculateTotalPower(String read){
-        JSONParser parser = new JSONParser();
-        String ts; 
-        String ph1;
-        String ph2;
-        String ph3;
-        
-        try {
-            JSONObject measureJSONobject = (JSONObject) parser.parse(read);
-            ts  = (String) measureJSONobject.get("timestamp");
-            ph1 = (String) parsePhaseJSONobject(measureJSONobject, "1");
-            ph2 = (String) parsePhaseJSONobject(measureJSONobject, "2");
-            ph3 = (String) parsePhaseJSONobject(measureJSONobject, "3");
-        } catch (ParseException e) {
-            System.err
-                    .println("[Diogo] Constructor JavaMeasure.Java: probably malformed JSON file...");
-            e.printStackTrace();
-        }
-        
-        return "";
-    }*/
+     * private static String calculateTotalPower(String read){ JSONParser parser = new
+     * JSONParser(); String ts; String ph1; String ph2; String ph3;
+     * 
+     * try { JSONObject measureJSONobject = (JSONObject) parser.parse(read); ts = (String)
+     * measureJSONobject.get("timestamp"); ph1 = (String)
+     * parsePhaseJSONobject(measureJSONobject, "1"); ph2 = (String)
+     * parsePhaseJSONobject(measureJSONobject, "2"); ph3 = (String)
+     * parsePhaseJSONobject(measureJSONobject, "3"); } catch (ParseException e) {
+     * System.err
+     * .println("[Diogo] Constructor JavaMeasure.Java: probably malformed JSON file...");
+     * e.printStackTrace(); }
+     * 
+     * return ""; }
+     */
 
     private static String readFileFisrtLines(String filename, int last) {
 
